@@ -5,6 +5,9 @@ while True:
         break
     operations = user_input.split()
     try:
+        if operations[0].split(':')[0].upper() != "ADD" or operations[1].split(':')[0].upper() != "SUB":
+            raise Exception('Invalid input format. Please try again.')
+            continue
         add = float(operations[0].split(':')[-1])
         sub = float(operations[1].split(':')[-1])
     except:
