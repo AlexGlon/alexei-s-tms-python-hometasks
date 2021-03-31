@@ -1,15 +1,20 @@
-# Дана строка целых чисел `numbers`, разделенных запятой.
-# Превратите строку в словарь `result`, где ключ словаря - число в строке, значение - число в кубе.
-# По возможности сделайте несколько вариантов решений, используя:
-# - цикл for (опционально while)
-# - словарное выражение (dict comprehension)
+# Task 1
 numbers = '1,100,15,17,3,221,9,5,7,2,8,11'
 result = {}
 
-# Ваше решение
+# Solution 1
 for i in numbers.split(','):
-    print(int(i))
     result.update({int(i): int(i)*int(i)*int(i)})
+print(result)
+
+result = {}
+
+# Solution 2
+numbers_list = numbers.split(',')
+i = 0
+while i < len(numbers_list):
+    result.update({int(numbers_list[i]): int(numbers_list[i]) * int(numbers_list[i]) * int(numbers_list[i])})
+    i += 1
 print(result)
 
 # Тесты
