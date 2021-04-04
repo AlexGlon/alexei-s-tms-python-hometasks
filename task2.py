@@ -74,6 +74,19 @@ strings = [
     'awd',
 ]
 
-
 assert filter(strings, has_three_a) == ['Abrakadabra', 'Abc Abc Abc', 'Chapter 1: Abrakadabra', 'abc abc abc',]
 assert filter(strings, is_alpha_title) == ['Abrakadabra', 'Abc Abc B', 'Abc Abc Abc',]
+
+# Task 2c
+
+initial = [(1, 2, 1), (1, 2, 5), (1, 2, 10), (1, 1, 1), (1, 1, 10), (0, 10, 10), (0, 9, 5)]
+result = []
+
+# можно ли это реализовать в одну строку?..
+result = sorted(initial, key = lambda initial: initial[2], reverse = True)
+result = sorted(result, key = lambda result: result[1])
+result = sorted(result, key = lambda result: result[0])
+print(result)
+
+assert result == [(0, 9, 5), (0, 10, 10), (1, 1, 10), (1, 1, 1), (1, 2, 10), (1, 2, 5), (1, 2, 1)]
+
