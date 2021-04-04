@@ -3,7 +3,7 @@ import typing
 
 # Task 2a
 
-def filter(sequence: typing.Iterable, condition: typing.Callable[[int], bool]):
+def filter(sequence: typing.Iterable, condition: typing.Callable[[int], bool]) -> list:
     elements_list = []
     for i in sequence:
         if i == 0:
@@ -36,7 +36,7 @@ assert filter(range(25), is_prime) == [1, 2, 3, 5, 7, 11, 13, 17, 19, 23]
 
 # Task 2b
 
-def filter(sequence, condition):
+def filter(sequence: typing.Iterable, condition: typing.Callable[[str], bool]) -> list:
     elements_list = []
     for i in sequence:
         if condition(i):
@@ -45,14 +45,14 @@ def filter(sequence, condition):
     return elements_list
 
 
-def has_three_a(item: str):
+def has_three_a(item: str) -> bool:
     if item.count("a") + item.count("A") >= 3:
         return True
     else:
         return False
 
 
-def is_alpha_title(item):
+def is_alpha_title(item: str) -> bool:
     if item.istitle():
         item = item.split()
         for i in item:
