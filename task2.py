@@ -84,7 +84,9 @@ result = []
 
 # можно ли это реализовать в одну строку?..
 result = sorted(initial, key = lambda initial: initial[2], reverse = True)
+print(result)
 result = sorted(result, key = lambda result: result[1])
+print(result)
 result = sorted(result, key = lambda result: result[0])
 print(result)
 
