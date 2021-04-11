@@ -1,5 +1,6 @@
 import requests
 import math
+import re
 
 BASE_URL = 'https://news.ycombinator.com/'
 
@@ -11,6 +12,10 @@ def get_page(page: int = 1) -> str:
     url = BASE_URL
     if page > 1:
         url = f'{BASE_URL}?p={page}'
+
+    print(f"Loading page {page}...")
+
+    print(requests.get(url).text)
 
     return requests.get(url).text
 
@@ -38,6 +43,16 @@ def show(user_input: str) -> None:
     request.append(requested)
     request.append(math.ceil(requested / 30))
     print(f"You've requested {request[0]} articles -- that'd require to load {request[1]} pages.")
+
+    i = 1
+    while i <= request[1]:
+        received = get_page(i)
+
+        links = []
+        links = re.findall(rb'href=\"(http://.*?)\"', received)
+        for link in links:
+            print(link.decode())
+        i += 1
     pass
 
 
