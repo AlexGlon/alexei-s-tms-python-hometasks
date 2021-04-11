@@ -1,4 +1,5 @@
 import requests
+import math
 
 BASE_URL = 'https://news.ycombinator.com/'
 
@@ -13,25 +14,35 @@ def get_page(page: int = 1) -> str:
 
     return requests.get(url).text
 
-# TODO: user input interpreter function
-
 def input_interpreter(user_input: str) -> None:
     """Calls a specific request handler function"""
     if (user_input.split()[0].lower() == "show"):
-        show()
+        show(user_input)
     elif (user_input.split()[0].lower() == "urlcontains"):
-        urlcontains()
+        urlcontains(user_input)
     else:
         print("Invalid input. Please try again.")
 
 # TODO: separate request interpreter functions
 
 
-def show():
+def show(user_input: str) -> None:
+    """Handles requests with `show` header"""
+    requested = 0
+
+    if user_input.split()[-1].isnumeric():
+        requested = int(user_input.split()[-1])
+
+    print(requested)
+    request = []
+    request.append(requested)
+    request.append(math.ceil(requested / 30))
+    print(f"You've requested {request[0]} articles -- that'd require to load {request[1]} pages.")
     pass
 
 
-def urlcontains():
+def urlcontains(user_input: str) -> None:
+    """Handles requests with `urlcontains` header"""
     pass
 
 
