@@ -15,7 +15,7 @@ def filter(sequence: typing.Iterable, condition: typing.Callable[[int], bool]) -
 
 
 def is_square(item: int) -> bool:
-    if math.sqrt(item) - math.floor(math.sqrt(item)) == 0:
+    if math.sqrt(item) - int(math.sqrt(item)) == 0:
         return True
     else:
         return False
@@ -46,24 +46,17 @@ def filter(sequence: typing.Iterable, condition: typing.Callable[[str], bool]) -
 
 
 def has_three_a(item: str) -> bool:
-    if item.count("a") + item.count("A") >= 3:
-        return True
-    else:
-        return False
+    return item.lower().count("a") >= 3
 
 
 def is_alpha_title(item: str) -> bool:
-    if item.istitle():
-        item = item.split()
-        for i in item:
-            if i.isalpha():
-                continue
-            else:
-                return False
-        return True
-    else:
+    if not item.istitle():
         return False
-
+    item = item.split()
+    for i in item:
+        if not i.isalpha():
+            return False
+    return True
 
 strings = [
     'Abrakadabra',
@@ -83,11 +76,7 @@ initial = [(1, 2, 1), (1, 2, 5), (1, 2, 10), (1, 1, 1), (1, 1, 10), (0, 10, 10),
 result = []
 
 # можно ли это реализовать в одну строку?..
-result = sorted(initial, key = lambda initial: initial[2], reverse = True)
-print(result)
-result = sorted(result, key = lambda result: result[1])
-print(result)
-result = sorted(result, key = lambda result: result[0])
+result = sorted(initial, key = lambda initial: (initial[0], initial[1], -initial[2]))
 print(result)
 
 assert result == [(0, 9, 5), (0, 10, 10), (1, 1, 10), (1, 1, 1), (1, 2, 10), (1, 2, 5), (1, 2, 1)]

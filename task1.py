@@ -11,7 +11,7 @@ def welcome_message():
     return input('Enter an operation in the following format: \"ADD:__  SUB:__\" (or enter \"EXIT\" to exit):\n')
 
 
-def extraction(string, n):
+def extract_amount(string, n):
     """Extracts valuables from split input string."""
     return float(string[n].split(':')[-1])
 
@@ -27,8 +27,8 @@ def main():
             if format_check(operations):
                 raise Exception('Invalid input format. Please try again.')
                 continue
-            add = extraction(operations, 0)
-            sub = extraction(operations, 1)
+            add = extract_amount(operations, 0)
+            sub = extract_amount(operations, 1)
         except:
             print('Invalid input format. Please try again.')
             continue
