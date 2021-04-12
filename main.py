@@ -69,19 +69,18 @@ def show(user_input: str) -> None:
 
         k=1
         for iteration in headers:
-            print(f"{k} {iteration}")
+            #print(f"{k} {iteration}")
             k += 1
 
         k = 1
         for iteration in headers:
-            processed = str(iteration)
-            print(processed)
-            author = iteration.find_all(string=re.compile('title\"><a href=\"(https://.*?)\"'))
-            link = ''.join(re.findall('href=\"(https://.*?)\"' or 'href=\"(.*?)\"', processed))
-            title = ''.join(re.findall('storylink\".*?">(.*?)</a>', processed))
-            #author = re.findall('hnuser\">(.*?)<', str(iteration))
-            #link = re.findall('title\"><a href=\"(https://.*?)\"' or 'title\"><a href=\"(.*?)\"', str(iteration))
-            print(f"{k}. {title} || {link}")
+            header_processed = str(iteration)
+            followup_processed = str(followups[k-1])
+            #print(f"{header_processed}\n\n{followup_processed}")
+            author = ''.join(re.findall('<a class="hnuser".*?\">(.*?)</a>', followup_processed))
+            link = ''.join(re.findall('href=\"(https?://.*?)\"', header_processed))
+            title = ''.join(re.findall('storylink\".*?">(.*?)</a>', header_processed))
+            print(f"{k}. {author} || {title} || {link}")
             k += 1
         i += 1
     pass
