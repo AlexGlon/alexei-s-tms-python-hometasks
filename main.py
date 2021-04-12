@@ -1,6 +1,7 @@
 import requests
 import math
 import re
+from bs4 import BeautifulSoup
 
 BASE_URL = 'https://news.ycombinator.com/'
 
@@ -42,20 +43,45 @@ def show(user_input: str) -> None:
     request = []
     request.append(requested)
     request.append(math.ceil(requested / 30))
-    print(f"You've requested {request[0]} articles -- that'd require to load {request[1]} pages.")
+    print(f"You've requested {request[0]} articles -- that'd require loading {request[1]} pages.")
 
-    limit_re = f"class = \"rank\">{requested}."
-    print(limit_re)
+    # TODO: limit regex generator func
+
+    LIMIT_RE = f"class = \"rank\">{requested}."
+    # print(LIMIT_RE)
 
     i = 1
     while i <= request[1]:
         received = get_page(i)
 
+        soup = BeautifulSoup(received, 'html.parser')
+        print(soup.title)
+
         links = []
-        links = re.findall('title\"><a href=\"(https://.*?)\"', received)
+        authors = []
+
+        #links = re.findall('title\"><a href=\"(https://.*?)\"' or 'title\"><a href=\"(.*?)\"', received)
+        #authors = re.findall('hnuser\">(.*?)<', received)
+        #links = soup.find_all('a', class_="storylink")
+        #authors = soup.find_all('a', class_="hnuser")
+        headers = soup.find_all('tr', class_="athing")
+        followups = soup.find_all('td', class_="subtext")
+
+        k=1
+        for iteration in headers:
+            print(f"{k} {iteration}")
+            k += 1
+
         k = 1
-        for link in links:
-            print(f"{k}. {link}")
+        for iteration in headers:
+            processed = str(iteration)
+            print(processed)
+            author = iteration.find_all(string=re.compile('title\"><a href=\"(https://.*?)\"'))
+            link = ''.join(re.findall('href=\"(https://.*?)\"' or 'href=\"(.*?)\"', processed))
+            title = ''.join(re.findall('storylink\".*?">(.*?)</a>', processed))
+            #author = re.findall('hnuser\">(.*?)<', str(iteration))
+            #link = re.findall('title\"><a href=\"(https://.*?)\"' or 'title\"><a href=\"(.*?)\"', str(iteration))
+            print(f"{k}. {title} || {link}")
             k += 1
         i += 1
     pass
