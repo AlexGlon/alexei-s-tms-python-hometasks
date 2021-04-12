@@ -66,7 +66,9 @@ def show(user_input: str) -> None:
             author = ''.join(re.findall('<a class="hnuser".*?\">(.*?)</a>', followup_processed))
             link = ''.join(re.findall('href=\"(https?://.*?)\"', header_processed))
             title = ''.join(re.findall('storylink\".*?">(.*?)</a>', header_processed))
-            print(f"{total_iter}. Title: {title}\nURL: {link}\nAuthor: {author}")
+            comments = ''.join(re.findall(' <a href="item.*?\">(.*?)\scomments</a> </td>', followup_processed))
+            rating = ''.join(re.findall('class="score".*?\">(.*?) points', followup_processed))
+            print(f"{total_iter}. Title: {title}\nURL: {link}\nAuthor: {author} || Comments: {comments} || Rating: {rating}\n")
 
             total_iter += 1
             onpage_iter += 1
