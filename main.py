@@ -44,14 +44,19 @@ def show(user_input: str) -> None:
     request.append(math.ceil(requested / 30))
     print(f"You've requested {request[0]} articles -- that'd require to load {request[1]} pages.")
 
+    limit_re = f"class = \"rank\">{requested}."
+    print(limit_re)
+
     i = 1
     while i <= request[1]:
         received = get_page(i)
 
         links = []
-        links = re.findall(rb'href=\"(http://.*?)\"', received)
+        links = re.findall('title\"><a href=\"(https://.*?)\"', received)
+        k = 1
         for link in links:
-            print(link.decode())
+            print(f"{k}. {link}")
+            k += 1
         i += 1
     pass
 
