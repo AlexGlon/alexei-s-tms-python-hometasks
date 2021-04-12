@@ -33,6 +33,55 @@ def input_interpreter(user_input: str) -> None:
 # TODO: separate request interpreter functions
 
 
+def get_title(source: str) -> str:
+    """Gets article title from the corresponding HTML block"""
+    string = ''.join(re.findall('storylink\".*?">(.*?)</a>', source))
+
+    if string == '':
+        return 'undefined'
+    return string
+
+
+def get_link(source: str) -> str:
+    """Gets article link from the corresponding HTML block"""
+    string = ''.join(re.findall('href=\"(https?://.*?)\"', source))
+
+    if string == '':
+        string = ''.join(re.findall('k\" href=\"(item.*?)\"', source))
+        string = 'https://news.ycombinator.com/' + string
+
+    if string == '':
+        return None
+    return string
+
+
+def get_author(source: str) -> str:
+    """Gets article author from the corresponding HTML block"""
+    string = ''.join(re.findall('<a class="hnuser".*?\">(.*?)</a>', source))
+
+    if string == '':
+        return None
+    return string
+
+
+def get_comments(source: str) -> str:
+    """Gets article comments count from the corresponding HTML block"""
+    string = ''.join(re.findall(' <a href="item.*?\">(.*?)\scomments</a> </td>', source))
+
+    if string == '':
+        return '0'
+    return string
+
+
+def get_rating(source: str) -> str:
+    """Gets article rating from the corresponding HTML block"""
+    string = ''.join(re.findall('class="score".*?\">(.*?) points', source))
+
+    if string == '':
+        return '0'
+    return string
+
+
 def show(user_input: str) -> None:
     """Handles requests with `show` header"""
     requested = 0
@@ -63,11 +112,11 @@ def show(user_input: str) -> None:
             followup_processed = str(followups[onpage_iter-1])
             # print(f"{header_processed}\n\n{followup_processed}")
 
-            author = ''.join(re.findall('<a class="hnuser".*?\">(.*?)</a>', followup_processed))
-            link = ''.join(re.findall('href=\"(https?://.*?)\"', header_processed))
-            title = ''.join(re.findall('storylink\".*?">(.*?)</a>', header_processed))
-            comments = ''.join(re.findall(' <a href="item.*?\">(.*?)\scomments</a> </td>', followup_processed))
-            rating = ''.join(re.findall('class="score".*?\">(.*?) points', followup_processed))
+            author = get_author(followup_processed)
+            link = get_link(header_processed)
+            title = get_title(header_processed)
+            comments = get_comments(followup_processed)
+            rating = get_rating(followup_processed)
             print(f"{total_iter}. Title: {title}\nURL: {link}\nAuthor: {author} || Comments: {comments} || Rating: {rating}\n")
 
             total_iter += 1
