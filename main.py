@@ -82,20 +82,28 @@ def get_rating(source: str) -> str:
     return string
 
 
-def show(user_input: str) -> None:
-    """Handles requests with `show` header"""
+# TODO: separate logic for a function that loads all the news into a list
+
+def news_loader(user_input: str):
     requested = 0
 
     if user_input.split()[-1].isnumeric():
         requested = int(user_input.split()[-1])
 
     print(requested)
-    request = [requested, math.ceil(requested / 30)]
-    print(f"You've requested {request[0]} articles -- that'd require loading {request[1]} pages.")
+    request = {
+        'total': requested,
+        'pages': math.ceil(requested / 30)
+    }
+    print(f"You've requested {request['total']} articles -- that'd require loading {request['pages']} pages.")
 
     page_iter = 1
     total_iter = 1
-    while page_iter <= request[1]:
+
+    news = []
+
+
+    while page_iter <= request['pages']:
         received = get_page(page_iter)
 
         soup = BeautifulSoup(received, 'html.parser')
@@ -105,24 +113,45 @@ def show(user_input: str) -> None:
 
         onpage_iter = 1
         for iteration in headers:
-            if total_iter > request[0]:
+            if total_iter > request['total']:
                 break
 
             header_processed = str(iteration)
-            followup_processed = str(followups[onpage_iter-1])
+            followup_processed = str(followups[onpage_iter - 1])
             # print(f"{header_processed}\n\n{followup_processed}")
 
-            author = get_author(followup_processed)
-            link = get_link(header_processed)
-            title = get_title(header_processed)
-            comments = get_comments(followup_processed)
-            rating = get_rating(followup_processed)
-            print(f"{total_iter}. Title: {title}\nURL: {link}\nAuthor: {author} || Comments: {comments} || Rating: {rating}\n")
+            news_dict = {
+                'author': get_author(followup_processed),
+                'link': get_link(header_processed),
+                'title': get_title(header_processed),
+                'comments': get_comments(followup_processed),
+                'rating': get_rating(followup_processed)
+            }
+            # print(f"{total_iter}. Title: {news_dict['title']}\n"
+            #       f"URL: {news_dict['link']}\n"
+            #       f"Author: {news_dict['author']}"
+            #       f" || Comments: {news_dict['comments']}"
+            #       f" || Rating: {news_dict['rating']}\n")
+
+            news.append(news_dict)
 
             total_iter += 1
             onpage_iter += 1
         page_iter += 1
 
+    return news
+
+
+def show(user_input: str) -> None:
+    """Handles requests with `show` header"""
+    news = news_loader(user_input)
+    iteration = 1
+    for i in news:
+        print(f"{iteration}. Title: {i['title']}"
+              f"\nURL: {i['link']}\nAuthor: {i['author']}"
+              f" || Comments: {i['comments']}"
+              f" || Rating: {i['rating']}\n")
+        iteration += 1
 
 def urlcontains(user_input: str) -> None:
     """Handles requests with `urlcontains` header"""
