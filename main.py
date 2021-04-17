@@ -46,25 +46,24 @@ def input_interpreter(user_input: str) -> None:
         print("Invalid input. Please try again.")
         return
 
-    #try:
-
     # dictionary of arguments initialized with default values
 
 # TODO: implement handling of cases where search string has spaces
 
 # TODO: more arguments for load/save functions
 
-        arg_dict = {
-            'load': 30,
-            'keyword': '',
-            'pick': 10,
-            #'toprating': (lambda input_list: True if input_list[1].lower() == 'toprating' else False)(),
-            'points': 100,
-        }
+    arg_dict = {
+        'load': 30,
+        'keyword': '',
+        'pick': 10,
+        'toprating': (lambda arg = input_list[1]: True if arg.lower() == 'toprating' else False)(),
+        'points': 100,
+    }
 
-        # fills `load` and `pick` arguments (and handles a case when the keyword goes after a load argument)
-        iteration = 0
+    # fills `load` and `pick` arguments (and handles a case when the keyword goes after a load argument)
+    iteration = 0
 
+    try:
         for i in input_list:
             if i.isnumeric():
                 arg_dict['load'] = int(i)
@@ -84,10 +83,14 @@ def input_interpreter(user_input: str) -> None:
 
         if input_list[1].split(':')[0] == 'points' and input_list[1].split(':')[1].isnumeric():
             arg_dict['points'] = int(input_list[1].split(':')[1])
+    except:
+        pass
 
-        command_handler[command](arg_dict)
+    command_handler[command](arg_dict)
+
     #except:
     #    print("Invalid syntax. Please try again.")
+
 
 def get_title(source: str) -> str:
     """Gets article title from the corresponding HTML block"""
@@ -139,12 +142,6 @@ def get_rating(source: str) -> str:
 
 
 def news_loader(requested):
-    # requested = 0
-    #
-    # if user_input.split()[-1].isnumeric():
-    #     requested = int(user_input.split()[-1])
-
-    print(requested)
     request = {
         'total': requested,
         'pages': math.ceil(requested / 30)
