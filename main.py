@@ -21,17 +21,73 @@ def get_page(page: int = 1) -> str:
     return requests.get(url).text
 
 
+# TODO: rework this function's logic so that it parses all the arguments
+# TODO: break down this function's logic into separate funcs maybe?
+
 def input_interpreter(user_input: str) -> None:
     """Calls a specific request handler function"""
-    if user_input.split()[0].lower() == "show":
-        show(user_input)
-    elif user_input.split()[0].lower() == "urlcontains":
-        urlcontains(user_input)
-    else:
+    input_list = user_input.split()
+
+    command = input_list[0].lower()
+
+# todo: turn string values into functions as soon as these functions are implemented
+
+    command_handler = {
+        'show': show,
+        'urlcontains': urlcontains,
+        'titlecontains': "titlecontains",
+        'author': "author",
+        'save': "save",
+        'load': "load",
+        'help': "help"
+    }
+
+    if command not in command_handler.keys():
         print("Invalid input. Please try again.")
+        return
 
-# TODO: separate request interpreter functions
+    #try:
 
+    # dictionary of arguments initialized with default values
+
+# TODO: implement handling of cases where search string has spaces
+
+# TODO: more arguments for load/save functions
+
+        arg_dict = {
+            'load': 30,
+            'keyword': '',
+            'pick': 10,
+            #'toprating': (lambda input_list: True if input_list[1].lower() == 'toprating' else False)(),
+            'points': 100,
+        }
+
+        # fills `load` and `pick` arguments (and handles a case when the keyword goes after a load argument)
+        iteration = 0
+
+        for i in input_list:
+            if i.isnumeric():
+                arg_dict['load'] = int(i)
+                if input_list[iteration+1].isnumeric():
+                    arg_dict['pick'] = int(input_list[iteration+1])
+                elif input_list[iteration+1].isalpha():
+                    arg_dict['keyword'] = input_list[iteration+1]
+                break
+            iteration += 1
+
+        # fills `keyword` argument for sure
+
+        if input_list[1].isalpha():
+            arg_dict['keyword'] = input_list[1]
+
+        # fills `points` argument
+
+        if input_list[1].split(':')[0] == 'points' and input_list[1].split(':')[1].isnumeric():
+            arg_dict['points'] = int(input_list[1].split(':')[1])
+
+        command_handler[command](arg_dict)
+    #except:
+    #    print("Invalid syntax. Please try again.")
 
 def get_title(source: str) -> str:
     """Gets article title from the corresponding HTML block"""
@@ -82,13 +138,11 @@ def get_rating(source: str) -> str:
     return string
 
 
-# TODO: separate logic for a function that loads all the news into a list
-
-def news_loader(user_input: str):
-    requested = 0
-
-    if user_input.split()[-1].isnumeric():
-        requested = int(user_input.split()[-1])
+def news_loader(requested):
+    # requested = 0
+    #
+    # if user_input.split()[-1].isnumeric():
+    #     requested = int(user_input.split()[-1])
 
     print(requested)
     request = {
@@ -99,9 +153,7 @@ def news_loader(user_input: str):
 
     page_iter = 1
     total_iter = 1
-
     news = []
-
 
     while page_iter <= request['pages']:
         received = get_page(page_iter)
@@ -142,19 +194,31 @@ def news_loader(user_input: str):
     return news
 
 
-def show(user_input: str) -> None:
+def show(arg_dict) -> None:
     """Handles requests with `show` header"""
-    news = news_loader(user_input)
+    news = news_loader(arg_dict['load'])
     iteration = 1
     for i in news:
-        print(f"{iteration}. Title: {i['title']}"
-              f"\nURL: {i['link']}\nAuthor: {i['author']}"
+        print(f"{iteration}. Title: {i['title']}\n"
+              f"URL: {i['link']}\nAuthor: {i['author']}"
               f" || Comments: {i['comments']}"
               f" || Rating: {i['rating']}\n")
         iteration += 1
 
-def urlcontains(user_input: str) -> None:
+
+# todo: rework this into not using argumanets
+
+def urlcontains(arg_dict) -> None:
     """Handles requests with `urlcontains` header"""
+    if not user_input.split()[1].isnumeric():
+        search = user_input.split()[1]
+        searchRE = f'({search}.*?)'
+        #news = news_loader()
+
+        # for i in news:
+        #     pass
+
+        #re.findall(searchRE, source)
     pass
 
 
