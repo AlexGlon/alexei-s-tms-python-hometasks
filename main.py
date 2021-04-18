@@ -57,6 +57,7 @@ def input_interpreter(user_input: str) -> None:
         'keyword': '',
         'pick': 10,
         'toprating': (lambda arg=input_list[1]: True if arg.lower() == 'toprating' else False)(),
+        'points_arg': False,
         'points': 100,
         'contains_handler': input_list[0].split('contains')[0]
     }
@@ -88,6 +89,7 @@ def input_interpreter(user_input: str) -> None:
         # fills `points` argument
 
         if input_list[1].split(':')[0] == 'points' and input_list[1].split(':')[1].isnumeric():
+            arg_dict['points_arg'] = True
             arg_dict['points'] = int(input_list[1].split(':')[1])
     except:
 
@@ -208,16 +210,18 @@ def show(arg_dict) -> None:
     if arg_dict['toprating']:
         news = sorted(news, key=lambda i: -i['rating'])
 
-    print(news)
-
     iteration = 1
     for i in news:
+        if arg_dict['points_arg'] and i['rating'] < arg_dict['points']:
+            continue
+
         print(f"{iteration}. Title: {i['title']}\n"
             f"URL: {i['url']}\nAuthor: {i['author']}"
             f" || Comments: {i['comments']}"
             f" || Rating: {i['rating']}\n")
         iteration += 1
-        if arg_dict['toprating'] and iteration > arg_dict['pick']:
+
+        if (arg_dict['toprating'] or arg_dict['points_arg']) and iteration > arg_dict['pick']:
             break
 
 
