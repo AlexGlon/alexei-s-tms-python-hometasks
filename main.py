@@ -30,13 +30,13 @@ def input_interpreter(user_input: str) -> None:
 
     command = input_list[0].lower()
 
-# todo: turn string values into functions as soon as these functions are implemented
+    # todo: turn string values into functions as soon as these functions are implemented
 
     command_handler = {
         'show': show,
-        'urlcontains': urlcontains,
-        'titlecontains': "titlecontains",
-        'author': "author",
+        'urlcontains': contains_handler,
+        'titlecontains': contains_handler,
+        'author': contains_handler,
         'save': "save",
         'load': "load",
         'help': "help"
@@ -48,16 +48,17 @@ def input_interpreter(user_input: str) -> None:
 
     # dictionary of arguments initialized with default values
 
-# TODO: implement handling of cases where search string has spaces
+    # TODO: implement handling of cases where search string has spaces
 
-# TODO: more arguments for load/save functions
+    # TODO: more arguments for load/save functions
 
     arg_dict = {
         'load': 30,
         'keyword': '',
         'pick': 10,
-        'toprating': (lambda arg = input_list[1]: True if arg.lower() == 'toprating' else False)(),
+        'toprating': (lambda arg=input_list[1]: True if arg.lower() == 'toprating' else False)(),
         'points': 100,
+        'contains_handler': input_list[0].split('contains')[0]
     }
 
     # fills `load` and `pick` arguments (and handles a case when the keyword goes after a load argument)
@@ -67,16 +68,21 @@ def input_interpreter(user_input: str) -> None:
         for i in input_list:
             if i.isnumeric():
                 arg_dict['load'] = int(i)
-                if input_list[iteration+1].isnumeric():
-                    arg_dict['pick'] = int(input_list[iteration+1])
-                elif input_list[iteration+1].isalpha():
-                    arg_dict['keyword'] = input_list[iteration+1]
+                if input_list[iteration + 1].isnumeric():
+                    arg_dict['pick'] = int(input_list[iteration + 1])
+                elif input_list[iteration + 1].isalpha():
+                    arg_dict['keyword'] = input_list[iteration + 1]
                 break
             iteration += 1
 
+    except:
+        pass
+
+    try:
+
         # fills `keyword` argument for sure
 
-        if input_list[1].isalpha():
+        if input_list[1].isalnum():
             arg_dict['keyword'] = input_list[1]
 
         # fills `points` argument
@@ -85,13 +91,13 @@ def input_interpreter(user_input: str) -> None:
             arg_dict['points'] = int(input_list[1].split(':')[1])
     except:
 
-# TODO: handling some cases that'd cause commands not to work
+        # TODO: handling some cases that'd cause commands not to work
 
         pass
 
-    #try:
+    # try:
     command_handler[command](arg_dict)
-    #except:
+    # except:
     #    print("Invalid syntax. Please try again.")
 
 
@@ -104,7 +110,7 @@ def get_title(source: str) -> str:
     return string
 
 
-def get_link(source: str) -> str:
+def get_url(source: str) -> str:
     """Gets article link from the corresponding HTML block"""
     string = ''.join(re.findall('href=\"(https?://.*?)\"', source))
 
@@ -176,13 +182,13 @@ def news_loader(requested):
 
             news_dict = {
                 'author': get_author(followup_processed),
-                'link': get_link(header_processed),
+                'url': get_url(header_processed),
                 'title': get_title(header_processed),
                 'comments': get_comments(followup_processed),
                 'rating': get_rating(followup_processed)
             }
             # print(f"{total_iter}. Title: {news_dict['title']}\n"
-            #       f"URL: {news_dict['link']}\n"
+            #       f"URL: {news_dict['url']}\n"
             #       f"Author: {news_dict['author']}"
             #       f" || Comments: {news_dict['comments']}"
             #       f" || Rating: {news_dict['rating']}\n")
@@ -202,25 +208,26 @@ def show(arg_dict) -> None:
     iteration = 1
     for i in news:
         print(f"{iteration}. Title: {i['title']}\n"
-              f"URL: {i['link']}\nAuthor: {i['author']}"
+              f"URL: {i['url']}\nAuthor: {i['author']}"
               f" || Comments: {i['comments']}"
               f" || Rating: {i['rating']}\n")
         iteration += 1
 
 
-# todo: rework this into not using argumanets
+# TODO: one function for urlcontains/titlecontains/author reqs
 
-def urlcontains(arg_dict) -> None:
-    """Handles requests with `urlcontains` header"""
+def contains_handler(arg_dict) -> None:
+    """Handles requests with `urlcontains`, `titlecontains` and `author` headers"""
 
+    print('Please bear in mind that this command is case-sensitive. In case no results were found, try again.')
     news = news_loader(arg_dict['load'])
     iteration = 1
     searchRE = f"({arg_dict['keyword']}.*?)"
 
     for i in news:
-        if re.findall(searchRE, i['link']):
+        if i[arg_dict['contains_handler']] is not None and re.findall(searchRE, i[arg_dict['contains_handler']]):
             print(f"{iteration}. Title: {i['title']}\n"
-                  f"URL: {i['link']}\nAuthor: {i['author']}"
+                  f"URL: {i['url']}\nAuthor: {i['author']}"
                   f" || Comments: {i['comments']}"
                   f" || Rating: {i['rating']}\n")
             iteration += 1
@@ -229,5 +236,5 @@ def urlcontains(arg_dict) -> None:
 while True:
     user_input = input("Please enter your command (or enter 'EXIT' to exit):")
     if user_input.upper() == 'EXIT':
-            break
+        break
     input_interpreter(user_input)
