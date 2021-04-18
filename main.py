@@ -1,6 +1,7 @@
 import requests
 import math
 import re
+import json
 from bs4 import BeautifulSoup
 
 BASE_URL = 'https://news.ycombinator.com/'
@@ -37,7 +38,7 @@ def input_interpreter(user_input: str) -> None:
         'urlcontains': contains_handler,
         'titlecontains': contains_handler,
         'author': contains_handler,
-        'save': "save",
+        'save': save,
         'load': "load",
         'help': "help"
     }
@@ -223,6 +224,14 @@ def show(arg_dict) -> None:
 
         if (arg_dict['toprating'] or arg_dict['points_arg']) and iteration > arg_dict['pick']:
             break
+
+
+def save(arg_dict) -> None:
+    news = news_loader(arg_dict['load'])
+
+    with open('result.json', 'w') as file:
+        for i in news:
+            json.dump(i, file, indent=4)
 
 
 def contains_handler(arg_dict) -> None:
