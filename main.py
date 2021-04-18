@@ -39,12 +39,12 @@ def input_interpreter(user_input: str) -> None:
         'titlecontains': contains_handler,
         'author': contains_handler,
         'save': save,
-        'load': "load",
+        'load': load,
         'help': "help"
     }
 
     if command not in command_handler.keys():
-        print("Invalid input. Please try again.")
+        print("Invalid command. Please try again.")
         return
 
     # dictionary of arguments initialized with default values
@@ -211,6 +211,8 @@ def show(arg_dict) -> None:
     if arg_dict['toprating']:
         news = sorted(news, key=lambda i: -i['rating'])
 
+# TODO: make this a separate function
+
     iteration = 1
     for i in news:
         if arg_dict['points_arg'] and i['rating'] < arg_dict['points']:
@@ -227,11 +229,29 @@ def show(arg_dict) -> None:
 
 
 def save(arg_dict) -> None:
+    """Handles requests with `save` header"""
+
     news = news_loader(arg_dict['load'])
 
     with open('result.json', 'w') as file:
-        for i in news:
-            json.dump(i, file, indent=4)
+        json.dump(news, file, indent=4)
+
+
+def load(arg_dict) -> None:
+    """Handles requests with `load` header"""
+
+    with open('result.json', 'r') as file:
+        news = json.load(file)
+
+    iteration = 1
+    for i in news:
+        if iteration > arg_dict['load']:
+            break
+        print(f"{iteration}. Title: {i['title']}\n"
+              f"URL: {i['url']}\nAuthor: {i['author']}"
+              f" || Comments: {i['comments']}"
+              f" || Rating: {i['rating']}\n")
+        iteration += 1
 
 
 def contains_handler(arg_dict) -> None:
