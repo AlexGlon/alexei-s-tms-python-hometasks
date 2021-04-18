@@ -84,10 +84,13 @@ def input_interpreter(user_input: str) -> None:
         if input_list[1].split(':')[0] == 'points' and input_list[1].split(':')[1].isnumeric():
             arg_dict['points'] = int(input_list[1].split(':')[1])
     except:
+
+# TODO: handling some cases that'd cause commands not to work
+
         pass
 
+    #try:
     command_handler[command](arg_dict)
-
     #except:
     #    print("Invalid syntax. Please try again.")
 
@@ -142,6 +145,8 @@ def get_rating(source: str) -> str:
 
 
 def news_loader(requested):
+    """Handles loading a list containing news"""
+
     request = {
         'total': requested,
         'pages': math.ceil(requested / 30)
@@ -160,13 +165,13 @@ def news_loader(requested):
         headers = soup.find_all('tr', class_="athing")
         followups = soup.find_all('td', class_="subtext")
 
-        onpage_iter = 1
+        onpage_iter = 0
         for iteration in headers:
             if total_iter > request['total']:
                 break
 
             header_processed = str(iteration)
-            followup_processed = str(followups[onpage_iter - 1])
+            followup_processed = str(followups[onpage_iter])
             # print(f"{header_processed}\n\n{followup_processed}")
 
             news_dict = {
@@ -207,16 +212,18 @@ def show(arg_dict) -> None:
 
 def urlcontains(arg_dict) -> None:
     """Handles requests with `urlcontains` header"""
-    if not user_input.split()[1].isnumeric():
-        search = user_input.split()[1]
-        searchRE = f'({search}.*?)'
-        #news = news_loader()
 
-        # for i in news:
-        #     pass
+    news = news_loader(arg_dict['load'])
+    iteration = 1
+    searchRE = f"({arg_dict['keyword']}.*?)"
 
-        #re.findall(searchRE, source)
-    pass
+    for i in news:
+        if re.findall(searchRE, i['link']):
+            print(f"{iteration}. Title: {i['title']}\n"
+                  f"URL: {i['link']}\nAuthor: {i['author']}"
+                  f" || Comments: {i['comments']}"
+                  f" || Rating: {i['rating']}\n")
+            iteration += 1
 
 
 while True:
