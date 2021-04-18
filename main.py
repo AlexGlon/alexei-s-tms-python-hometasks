@@ -132,22 +132,22 @@ def get_author(source: str) -> str:
     return string
 
 
-def get_comments(source: str) -> str:
+def get_comments(source: str) -> int:
     """Gets article comments count from the corresponding HTML block"""
     string = ''.join(re.findall(' <a href="item.*?\">(.*?)\scomments</a> </td>', source))
 
     if string == '':
-        return '0'
-    return string
+        return 0
+    return int(string)
 
 
-def get_rating(source: str) -> str:
+def get_rating(source: str) -> int:
     """Gets article rating from the corresponding HTML block"""
     string = ''.join(re.findall('class="score".*?\">(.*?) points', source))
 
     if string == '':
-        return '0'
-    return string
+        return 0
+    return int(string)
 
 
 def news_loader(requested):
@@ -205,16 +205,21 @@ def news_loader(requested):
 def show(arg_dict) -> None:
     """Handles requests with `show` header"""
     news = news_loader(arg_dict['load'])
+    if arg_dict['toprating']:
+        news = sorted(news, key=lambda i: -i['rating'])
+
+    print(news)
+
     iteration = 1
     for i in news:
         print(f"{iteration}. Title: {i['title']}\n"
-              f"URL: {i['url']}\nAuthor: {i['author']}"
-              f" || Comments: {i['comments']}"
-              f" || Rating: {i['rating']}\n")
+            f"URL: {i['url']}\nAuthor: {i['author']}"
+            f" || Comments: {i['comments']}"
+            f" || Rating: {i['rating']}\n")
         iteration += 1
+        if arg_dict['toprating'] and iteration > arg_dict['pick']:
+            break
 
-
-# TODO: one function for urlcontains/titlecontains/author reqs
 
 def contains_handler(arg_dict) -> None:
     """Handles requests with `urlcontains`, `titlecontains` and `author` headers"""
