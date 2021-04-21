@@ -1,28 +1,28 @@
 import file_processing
 
 
-
-# в вашей программе должно быть реализовано следующее
-# TODO: при работе программы персонажи должны быть представлены объектами класса Character с необходимым набором аттрибутов (то есть вам необходимо перевести список словарей о персонажах в объекты класса Character: List[Dict] -> List[Character])
-
-# пример перевода словаря в объект
-character = {
-    'name': 'Rick',
-    'species': 'Human',
-}
-
-
 class Character:
-    def __init__(self, name, species):
-        self.name = name
-        self.species = species
-
-
-rick = Character(name=character['name'], species=character['species'])
+    def __init__(self, char_dict):
+        self.name = char_dict['name']
+        self.species = char_dict['species']
+        self.status = char_dict['status']
+        self.type = char_dict['type']
+        self.gender = char_dict['gender']
+        self.origin = char_dict['origin']['name']
+        self.location = char_dict['location']['name']
 
 
 # url response print
-print(file_processing.list_load())
+chars = file_processing.list_load()
+
+char_obj_list = []
+
+for i in chars:
+    new_char = Character(i)
+    char_obj_list.append(new_char)
+
+for i in char_obj_list:
+    print(i.name, i.origin, i.status, i.gender, i.species, i.location, i.type)
 
 
 # 4*. реализуйте класс Aggregator, который аттрибутом принимает список объектов персонажей и, на основании списка всех персонажей, может вывести на экран саггрегированную информацию:

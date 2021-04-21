@@ -15,8 +15,9 @@ def get_characters():
 
 def save_file():
     with open('characters.json', 'w') as file:
-        json.dump(get_characters(), file, indent=4)
-    pass
+        characters = get_characters()
+        json.dump(characters, file, indent=4)
+    return characters
 
 
 def load_file():
@@ -29,7 +30,7 @@ def list_load():
     import os
     if not os.path.isfile('characters.json'):
         print('Loading character list from the external source...')
-        return get_characters()
+        return save_file()
     else:
         print('Loading character list from the local source...')
         return load_file()
