@@ -22,7 +22,7 @@ class Character:
             'location': self.location
         }
         if key in keys_dict:
-            return keys_dict[key].lower()
+            return keys_dict[key]
 
 
 class Aggregator:
@@ -31,33 +31,42 @@ class Aggregator:
 
     def key_info(self, request):
         total = 0
+
         for i in self.char_list:
+            if request.get_argument().upper() == i.get_value(request.get_command()).upper():
+                # print(i.get_value(request.get_command()))
+                total += 1
 
-            if request.get_argument() == i.get_value(request.get_command()):
-                print(i.get_value(request.get_command()))
-                pass
+        print(total)
 
+    def field_info(self, request):
+        total = {}
 
-        pass
-        return total
+        for i in self.char_list:
+            if i.get_value(request.get_command()) not in total.keys():
+                total.update({
+                    i.get_value(request.get_command()): 1
+                })
+            else:
+                total[i.get_value(request.get_command())] += 1
 
-    def field_info(self):
-        total = 0
+        print(total)
 
-
-
-        pass
-        return total
-
-
-    pass
+    def command_handler(self, request):
+        if request.get_argument() == '':
+            self.field_info(request)
+        else:
+            self.key_info(request)
 
 
 class RequestParser:
     def __init__(self, request):
         self.prefix = request[0].lower()
         self.command = request[1].lower()
-        self.argument = request[2].lower()
+        try:
+            self.argument = request[2].lower()
+        except:
+            self.argument = ''
 
     def get_prefix(self):
         return self.prefix
@@ -84,8 +93,8 @@ char_aggregator = Aggregator(char_obj_list)
 
 while True:
     request = RequestParser(input("Please enter your command: ").split())
-    print(request.prefix, request.command, request.argument)
-    char_aggregator.key_info(request)
+#    print(request.prefix, request.command, request.argument)
+    char_aggregator.command_handler(request)
 
 
 # TODO: реализуйте класс Aggregator, который аттрибутом принимает список объектов персонажей и, на основании списка всех персонажей, может вывести на экран саггрегированную информацию:
