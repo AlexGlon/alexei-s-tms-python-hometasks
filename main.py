@@ -12,6 +12,18 @@ class Character:
         self.location = char_dict['location']['name']
 
 
+class Aggregator:
+
+    pass
+
+
+class RequestParser:
+    def __init__(self, request):
+        self.prefix = request[0]
+        self.command = request[1]
+        self.argument = request[2]
+
+
 # url response print
 chars = file_processing.list_load()
 
@@ -24,18 +36,21 @@ for i in chars:
 for i in char_obj_list:
     print(i.name, i.origin, i.status, i.gender, i.species, i.location, i.type)
 
+while True:
+    request = RequestParser(input("Please enter your command: ").split())
+    print(request.prefix, request.command, request.argument)
 
-# 4*. реализуйте класс Aggregator, который аттрибутом принимает список объектов персонажей и, на основании списка всех персонажей, может вывести на экран саггрегированную информацию:
-# подсказка: возможно, вам потребуется еще один класс, который запрос с клавиатуры конвертирует в объект запроса
+
+# TODO: реализуйте класс Aggregator, который аттрибутом принимает список объектов персонажей и, на основании списка всех персонажей, может вывести на экран саггрегированную информацию:
 #
-# возможность получить кол-во персонажей по каждому признаку (ключу), указанному выше
+# TODO: возможность получить кол-во персонажей по каждому признаку (ключу), указанному выше
 # >>> show status alive
 # >>> выводит на экран кол-во живых персонажей
 #
 # >>> show species human
 # >>> выводит кол-во людей
 #
-# возможность вывести на экран общую аггрегацию по признаку
+# TODO: возможность вывести на экран общую аггрегацию по признаку
 # >>> show status
 # >>> Alive 100
 # >>> unknown 37
