@@ -26,7 +26,13 @@ def load_file():
 
 
 def list_load():
-    pass
+    import os
+    if not os.path.isfile('characters.json'):
+        print('Loading character list from the external source...')
+        return get_characters()
+    else:
+        print('Loading character list from the local source...')
+        return load_file()
 # в результате вам вернется список словарей-персонажей, в которых вам необходимы следующие ключи:
 # name - имя персонажа
 # status - жив персонаж или нет
