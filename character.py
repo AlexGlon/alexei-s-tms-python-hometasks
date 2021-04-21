@@ -22,14 +22,15 @@ class Character:
 
     def get_value(self, key):
         """Gets `value` of a specified object key."""
-        keys_dict = {
-            'name': self.name,
-            'species': self.species,
-            'status': self.status,
-            'type': self.type,
-            'gender': self.gender,
-            'origin': self.origin,
-            'location': self.location
-        }
-        if key in keys_dict:
-            return keys_dict[key]
+        # keys_dict = {
+        #     'name': self.name,
+        #     'species': self.species,
+        #     'status': self.status,
+        #     'type': self.type,
+        #     'gender': self.gender,
+        #     'origin': self.origin,
+        #     'location': self.location
+        # }
+
+        if key in self.__dict__:
+            return self.__dict__[key]
