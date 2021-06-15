@@ -4,7 +4,6 @@ import json
 def get_characters():
     import requests
     url = 'https://rickandmortyapi.com/api/character/'
-
     return requests.get(url).json()['results']
 
 
